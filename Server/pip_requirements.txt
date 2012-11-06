@@ -1,0 +1,4 @@
+gevent
+django
+gevent-websocket
+gevent-socketio
