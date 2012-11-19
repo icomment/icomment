@@ -47,8 +47,8 @@ create table url
 	md5 varchar(32)
 );
 # Test cases
-insert into url values(null,'http://www.bbc.co.uk/news/world-us-canada-20121811','F7ADF3E718EBFFFB');
-insert into url values(null,'http://www.bbc.co.uk/news/world-us-canada-20104929','9275E4C4F4DBEFCB');
+insert into url values(null,'http://www.bbc.co.uk/news/world-us-canada-20121811','810864D2F7ADF3E718EBFFFBFB4F6132');
+insert into url values(null,'http://www.bbc.co.uk/news/world-us-canada-20104929','6BD0EDAD9275E4C4F4DBEFCBA94D3CCD');
 
 # User comments table
 create table comments
