@@ -12,7 +12,9 @@ WEB_SOCKET_DEBUG = true;
 
 url_re =/[a-zA-z]+:\/\/([^s]*)/
 
-wsHost= "http://192.168.1.101:8080" //server& socket port
+//wsHost= "http://192.168.1.101:8080" //server& socket port
+//wsHost="http://127.0.0.1:8080"
+wsHost ="http://50.19.165.203:80"
 
 
 
@@ -64,7 +66,7 @@ socket.on('reconnecting', function () {
 });
 
 socket.on('error', function (e) {
-     alert('System', e ? e : 'A unknown error occurred')
+     alert('System', e ? e : 'A unknown error occurred, server may be not running!')
     //message('System', e ? e : 'A unknown error occurred');
 });
 
@@ -140,7 +142,7 @@ function onConnHandler(port){
   	icBG.r2p[roomID]=port;
 
     //2 send join room request
-    socket.emit('join', roomID, function (data) {
+    socket.emit('join', url,roomID, function (data) {
         console.log("test return para:"+data)
         
         //onConn room
@@ -163,7 +165,7 @@ function onConnHandler(port){
         }      
     	}else if(evt.type == "newMessage"){
         console.log("send newMessage in room:"+evt.data.roomID);
-    		socket.emit('user message', evt.data.msg, evt.data.roomID);
+    		socket.emit('user message', evt.data.msg, url); //evt.data.roomID);
     	
       }else if(evt.type == "checkLogin"){
           
