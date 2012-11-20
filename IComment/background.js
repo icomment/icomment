@@ -10,7 +10,6 @@ WEB_SOCKET_DEBUG = true;
 //wsHost= "http://localhost:8080" //server& socket port
 
 
-url_re =/[a-zA-z]+:\/\/([^s]*)/
 
 //wsHost= "http://192.168.1.101:8080" //server& socket port
 //wsHost="http://127.0.0.1:8080"
@@ -104,13 +103,14 @@ chrome.extension.onMessage.addListener(
 console.log('add listener in bg')
 */
 
-function encodeURL2RoomID(url){
+url_re =/[a-zA-z]+:\/\/([^s]*)/
+function rewriteURL(url){
+  url_re.test(url) 
+  return RegExp.$1
+}
+function encodeURL2RoomID(rewroteURL){
   //processing url and return a md5
-  
-  //remove protocol type of web url
-  url_re.test(url)
-
-  var roomID = CryptoJS.MD5(RegExp.$1).toString(CryptoJS.enc.Hex);
+  var roomID = CryptoJS.MD5(rewroteURL).toString(CryptoJS.enc.Hex);
   console.log(roomID);
 	return roomID
 }
@@ -129,7 +129,9 @@ function onConnHandler(port){
       return ;
     }
 
-  	var url = port.sender.tab.url;
+  	var origUrl = port.sender.tab.url;
+    var url = rewriteURL(origUrl);
+
     console.log("onConn 2 url:"+url)
 
   	var roomID= encodeURL2RoomID(url); //roomID should be a md5
