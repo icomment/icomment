@@ -3,7 +3,10 @@ apt-get install python-dev
 apt-get install libevent-dev
 
 //install pip
-easy_install pip pip install virtualenv virtualenv . source ./bin/activate
+easy_install pip 
+pip install virtualenv 
+virtualenv . 
+source ./bin/activate
 
 //pip get the lists
 pip install gevent 
