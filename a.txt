@@ -4,3 +4,4 @@ if you find any bugs leave issueses except the following, you will be rewarded  
 1.sql injection in server code 
 2.XSS in message sending from one client to another(also in nickname)
 
+ 
