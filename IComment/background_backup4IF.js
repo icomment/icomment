@@ -10,11 +10,10 @@ WEB_SOCKET_DEBUG = true;
 //wsHost= "http://localhost:8080" //server& socket port
 
 
-url_re =/[a-zA-z]+:\/\/([^s]*)/
 
 //wsHost= "http://192.168.1.101:8080" //server& socket port
-wsHost="http://127.0.0.1:8080"
-//wsHost ="http://50.19.165.203:80"
+//wsHost="http://127.0.0.1:8080"
+wsHost ="http://50.19.165.203:80"
 
 
 
@@ -103,20 +102,17 @@ chrome.extension.onMessage.addListener(
   });
 console.log('add listener in bg')
 */
-function formatURL(url){
-  url_re.test(url)
 
-  return CryptoJS.MD5(RegExp.$1)
-
+url_re =/[a-zA-z]+:\/\/([^s]*)/
+function rewriteURL(url){
+  url_re.test(url) 
+  return RegExp.$1
 }
-
-function encodeURL2RoomID(url){
+function encodeURL2RoomID(rewroteURL){
   //processing url and return a md5
-  
-  //remove protocol type of web url
-  return url.toString(CryptoJS.enc.Hex);
-  //console.log(roomID);
-	//return roomID
+  var roomID = CryptoJS.MD5(rewroteURL).toString(CryptoJS.enc.Hex);
+  console.log(roomID);
+	return roomID
 }
 
  
@@ -133,7 +129,8 @@ function onConnHandler(port){
       return ;
     }
 
-  	var url = port.sender.tab.url;
+  	var origUrl = port.sender.tab.url;
+    var url = rewriteURL(origUrl);
 
     console.log("onConn 2 url:"+url)
 
@@ -147,7 +144,7 @@ function onConnHandler(port){
   	icBG.r2p[roomID]=port;
 
     //2 send join room request
-    socket.emit('join',roomID, function (data) {
+    socket.emit('join', url,roomID, function (data) {
         console.log("test return para:"+data)
         
         //onConn room
