@@ -16,7 +16,7 @@
 
   "content_scripts":[{
     "css":["icCS.css"],
-    "js":["jqmin.js", "sidebar.js","icCS_roomBase.js","icCS_roomExt.js"],
+    "js":["jqmin.js", "sidebar.js","jq_sexy_textarea.js","icCS_roomBase.js","icCS_roomExt.js"],
     //"js":["jqmin.js", "icCS_roomExt.js"],
     "matches":["*://*/*" ],
     "run_at":"document_idle" 
@@ -25,5 +25,11 @@
 
   "permissions": [
     "tabs"
+  ],
+
+  //all embed res need to be claimed here
+   "web_accessible_resources":[
+      "logo.png" 
   ]
+
 }
