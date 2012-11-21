@@ -17,10 +17,7 @@ def user_register(user_name):
 	# To get current cursor
 	cur = conn.cursor()
 	# To generate a sql query text
-	#sql = 'insert into users values(null,\'' + user_name + '\',\'password1\',\'email1\',1,\'' + reg_time + '\')'
-
 	sql = '''insert into users values(null,%s,now())'''
-
 	# To execute the generated sql text
 	cur.execute(sql,user_name)
 	# To commit the actions, if not, it will not execute anything
@@ -53,10 +50,8 @@ def store_comment(user_name, message, md5):
 	uID = cur.fetchone()
 	# To convert format from tuple to string
 	uID = str(uID)
-
 	# To split out the user ID from the return results
 	uID = uID[1: + uID.find("L",1,-1)]
-
 	# This set of codes is to get the supported website indexID
 	# To execute the generated sql text
 	cur.execute('''select indexID from url where md5 = %s''', md5 )
@@ -67,11 +62,9 @@ def store_comment(user_name, message, md5):
 	# To split out the supported website indexID from the return results
 	urlID = urlID[1: + urlID.find("L",1,-1)]
 	# To execute the generated sql text
-	print urlID
-	print uID
-	print message
 	sql = '''insert into comments values(null,%s,%s,now(),%s)'''
 	args = int(urlID) ,message, int(uID)
+	# To execute the sql
 	cur.execute(sql,args)
 	# To commit the actions, if not, it will not execbte anything
 	conn.commit()
@@ -118,14 +111,13 @@ def get_all_history(url, md5):
 	# If there is the room, then to get all the history from it, currently it only gets the latest 2 comments
 	else:
 		# To generate a sql query text
-		#sql = 'select c.commentContent,us.uName from comments c, url u,users us where u.md5 = \'' + md5 + '\' and u.indexId = c.urlID and c.uID = us.indexID order by c.commentTime desc limit 0,2'
-		#sql = 'select c.commentTime, c.commentContent,us.uName from comments c, url u,users us where u.md5 = \'' + md5 + '\' and u.indexId = c.urlID and c.uID = us.indexID order by c.commentTime desc limit 0,2'
 		sql = '''select c.commentTime, c.commentContent,us.uName from comments c, url u,users us where u.md5 = %s and u.indexId = c.urlID and c.uID = us.indexID order by c.commentTime desc limit 0,2'''
 		# To execute the generated sql text
 		cur.execute(sql, md5)
 		# To get all sets of data from the return results
 		allhistory = cur.fetchall()
 
+		# To covert the datetime and store in a list, at last send to client in jason format
   		for i in range(0,len(allhistory)):
   			newitem = []
   			for t in range(0,3):
