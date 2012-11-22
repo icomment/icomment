@@ -8,8 +8,8 @@ var isServerOpen=false;
 // socket.io specific code
 
 //wsHost= "http://localhost:8080" //server& socket port
-//wsHost= "http://192.168.1.101:8080" //server& socket port
-//wsHost ="http://50.19.165.203:80"
+
+//var wsHost ="http://50.19.165.203:8000"
 var wsHost="http://127.0.0.1:8080";
 
 var url_re =/[a-zA-z]+:\/\/(\S+)/ ;

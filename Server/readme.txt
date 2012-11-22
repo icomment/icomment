@@ -46,3 +46,7 @@ Start the server:
     python run_server.py
 
     you can change the default port 8080, but keep in mind this would also affect the port of websocket connection address used by client.
+
+Note: if you get error "mysql_config not found" when program import MySQLdb, please ref this solution.
+
+http://stackoverflow.com/questions/7475223/mysql-config-not-found-when-installing-mysqldb-python-interface
