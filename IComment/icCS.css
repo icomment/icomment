@@ -4,81 +4,152 @@
 /*clear default*/
 
 
-/* main*/
+/* main reset css for this sidebar region */
+.icSideBarCls div,
+.icSideBarCls span,
+.icSideBarCls iframe, 
+.icSideBarCls form{
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  vertical-align: baseline;
+  background: transparent;
+
+}
 
 /*---copy form chatHTML-css --------*/
-#chat,
-#nickname,
-#messages {
+#icSideBar-chat,
+#icSideBar-nickname,
+#icSideBar-messages {
   width: 240px;
 }
-#chat {
+#icSideBar-chat {
   position: relative;
-  border: 1px solid #ccc;
 }
-#nickname,
-#connecting {
-  position: absolute;
+
+#icSideBar-logobar{
+  width:240px;
+  height:40px;
+ 
+  background: #aac;
+}
+
+#icSideBar-logo,#icSideBar-login{
+  float:left;
+  padding: 4px 4px 4px 4px;
+  height:32px;
+
+}
+#icSideBar-logo{
+  width:100px;
+}
+#icSideBar-login{
+  margin:8px 0px 0px 60px;
+  width:60px;
+}
+
+
+
+/*
+connecting div only show when init ttranso connect backend
+
+ #nickname is a user login window div*/
+.notlogin #icSideBar-messages{display:block; }
+.notLogin #icSideBar-nickname,
+.notLogin #icSideBar-connecting,
+.notLogin #icSideBar-send-message{ display:none;}
+
+
+.tryLogin #icSideBar-nickname{ display:block;}
+.tryLogin #icSideBar-messages,
+.tryLogin #icSideBar-connecting,
+.tryLogin #icSideBar-send-message{ display:none;}
+
+ #icSideBar-logobar,
+ #icSideBar-send-message,
+ #icSideBar-messages{text-align: left; }
+
+ #icSideBar-nickname,
+ #icSideBar-connecting,{text-align: center;}
+
+
+
+#icSideBar-nickname,
+#icSideBar-connecting {
+
   height: 410px;
-  z-index: 100;
-  left: 0;
-  top: 0;
   background: #fff;
   text-align: center;
   width: 240px;
   font: 15px Georgia;
   color: #666;
   display: block;
+
+  border: 1px solid #ccc;
 }
-#nickname .wrap,
-#connecting .wrap {
+
+#icSideBar-nickname .wrap,
+#icSideBar-connecting .wrap {
   padding-top: 150px;
 }
-#nickname input {
+#icSideBar-nickname input {
   border: 1px solid #ccc;
   padding: 10px;
 }
-#nickname input:focus {
+#icSideBar-nickname input:focus {
   border-color: #999;
   outline: 0;
 }
-#nickname #nickname-err {
+
+.nickname-set #icSideBar-nickname {
+  display: none;
+}
+
+#icSideBar-nickname #icSideBar-nickname-err {
   color: #8b0000;
   font-size: 12px;
   visibility: hidden;
 }
-.connected #connecting {
+#icSideBar-doLoginBtn{
+  margin-left:30px;
+}
+.connected #icSideBar-connecting {
   display: none;
 }
-.nickname-set #nickname {
-  display: none;
-}
-#messages {
-  height: 380px;
+
+
+
+#icSideBar-messages {
+
+  height: 410px;
   background: #eee;
 }
-#messages em {
+#icSideBar-messages em {
   text-shadow: 0 1px 0 #fff;
   color: #999;
 }
-#messages p {
+#icSideBar-messages p {
   padding: 0;
   margin: 0;
   font: 12px Helvetica, Arial;
   padding: 5px 10px;
 }
-#messages p b {
+#icSideBar-messages p b {
   display: inline-block;
   padding-right: 10px;
 }
-#messages p:nth-child(even) {
+#icSideBar-messages p:nth-child(even) {
   background: #fafafa;
 }
-#messages #nicknames {
+#icSideBar-messages #icSideBar-nicknames {
   background: #ccc;
   padding: 2px 4px 4px;
   font: 11px Helvetica;
+  min-height:24px;
+  max-height: 64px; 
 }
+/*
 #messages #nicknames span {
   color: #000;
 }
@@ -93,59 +164,73 @@
   border-radius: 10px;
   text-shadow: 0 1px 0 #666;
 }
-#messages #lines {
+*/
+#icSideBar-messages #icSideBar-lines {
   height: 355px;
   overflow: auto;
   overflow-x: hidden;
   overflow-y: auto;
 }
-#messages #lines::-webkit-scrollbar {
+#icSideBar-messages #icSideBar-lines::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
-#messages #lines::-webkit-scrollbar-button:start:decrement,
-#messages #lines ::-webkit-scrollbar-button:end:increment {
+#icSideBar-messages #icSideBar-lines::-webkit-scrollbar-button:start:decrement,
+#icSideBar-messages #icSideBar-lines ::-webkit-scrollbar-button:end:increment {
   display: block;
   height: 10px;
 }
-#messages #lines::-webkit-scrollbar-button:vertical:increment {
+#icSideBar-messages #icSideBar-lines::-webkit-scrollbar-button:vertical:increment {
   background-color: #fff;
 }
-#messages #lines::-webkit-scrollbar-track-piece {
+#icSideBar-messages #icSideBar-lines::-webkit-scrollbar-track-piece {
   background-color: #fff;
   -webkit-border-radius: 3px;
 }
-#messages #lines::-webkit-scrollbar-thumb:vertical {
+#icSideBar-messages #icSideBar-lines::-webkit-scrollbar-thumb:vertical {
   height: 50px;
   background-color: #ccc;
   -webkit-border-radius: 3px;
 }
-#messages #lines::-webkit-scrollbar-thumb:horizontal {
+#icSideBar-messages #icSideBar-lines::-webkit-scrollbar-thumb:horizontal {
   width: 50px;
   background-color: #fff;
   -webkit-border-radius: 3px;
 }
-#send-message {
-  background: #fff;
-  position: relative;
+
+
+
+#icSideBar-send-message {
+  background: transparent;
+  /*position: relative;*/
+  height:90px;
+
+
 }
-#send-message input {
-  border: none;
-  height: 30px;
+#icSideBar-send-message input {
+  
+  border: 1px solid #ccc;
+  height: 60px;
   padding: 0 10px;
   line-height: 30px;
   vertical-align: middle;
-  width: 200px;
+  width:240px;
 }
-#send-message input:focus {
+#icSideBar-send-message input:focus {
   outline: 0;
 }
-#send-message button {
+#icSideBar-send-message button {
+  float:right;
+  margin-top: 5px;
+  margin-right: 5px;
+  /*
   position: absolute;
+
   top: 5px;
   right: 5px;
+  */
 }
-button {
+.icSideBarCls button {
   margin: 0;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -154,9 +239,11 @@ button {
   text-decoration: none;
   background: #43a1f7;
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #43a1f7), color-stop(1, #377ad0));
+  /*
   background: -webkit-linear-gradient(top, #43a1f7 0%, #377ad0 100%);
   background: -moz-linear-gradient(top, #43a1f7 0%, #377ad0 100%);
   background: linear-gradient(top, #43a1f7 0%, #377ad0 100%);
+  */
   border: 1px solid #2e70c4;
   -webkit-border-radius: 16px;
   -moz-border-radius: 16px;
@@ -170,26 +257,29 @@ button {
   text-align: center;
   text-shadow: 0 -1px 1px #2d6dc0;
 }
-button:hover,
-button.hover {
+.icSideBarCls button:hover,
+.icSideBarCls button.hover {
   background: darker;
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #43a1f7), color-stop(1, #2e70c4));
-  background: -webkit-linear-gradient(top, #43a1f7 0%, #2e70c4 100%);
-  background: -moz-linear-gradient(top, #43a1f7 0%, #2e70c4 100%);
-  background: linear-gradient(top, #43a1f7 0%, #2e70c4 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #43a1f7), color-stop(1, #2eeec4));
+ 
+ /* 
+  background: -webkit-linear-gradient(top, #43a1f7 0%, #2eeec4 100%);
+  background: -moz-linear-gradient(top, #43a1f7 0%, #2eeec4 100%);
+  background: linear-gradient(top, #43a1f7 0%, #2eeec4 100%);
+  */
   border: 1px solid #2e70c4;
   cursor: pointer;
   text-shadow: 0 -1px 1px #2c6bbb;
 }
-button:active,
-button.active {
+.icSideBarCls button:active,
+.icSideBarCls button.active {
   background: #2e70c4;
   border: 1px solid #2e70c4;
   border-bottom: 1px solid #2861aa;
   text-shadow: 0 -1px 1px #2b67b5;
 }
-button:focus,
-button.focus {
+.icSideBarCls button:focus,
+.icSideBarCls button.focus {
   outline: none;
   -webkit-box-shadow: 0 1px 0 0 rgba(255,255,255,0.4), 0 0 4px 0 #377ad0;
   -moz-box-shadow: 0 1px 0 0 rgba(255,255,255,0.4), 0 0 4px 0 #377ad0;

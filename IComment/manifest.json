@@ -9,21 +9,31 @@
     "scripts":["md5.js","socket.io.js","background.js"]
   },
 
-  "browser_action": {
+  "page_action": {
     "default_icon": "icon.png",
     "default_popup": "popup.html"
   },
 
+  /*
   "content_scripts":[{
     "css":["icCS.css"],
-    "js":["jqmin.js", "sidebar.js","icCS_roomBase.js","icCS_roomExt.js"],
+    "js":["jqmin.js", "sidebar.js","jq_sexy_textarea.js","icCS_roomBase.js","icCS_roomExt.js"],
     //"js":["jqmin.js", "icCS_roomExt.js"],
-    "matches":["*://*/*" ],
+    "matches":[
+      "*://*.cnn.com/*"
+    ],
     "run_at":"document_idle" 
   }],
-
+  */
 
   "permissions": [
-    "tabs"
+    "tabs",
+    "*://*.cnn.com/*"
+  ],
+
+  //all embed res need to be claimed here
+   "web_accessible_resources":[
+      "logo.png" 
   ]
+
 }

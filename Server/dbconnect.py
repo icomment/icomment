@@ -12,7 +12,7 @@ import json
 
 def init_connection():
 
-	conn = MySQLdb.connect(host = 'localhost', user = 'root', passwd = 'toor', db = 'icomment', port = 3306)
+	conn = MySQLdb.connect(host = 'localhost', user = 'root', passwd = 'root123', db = 'icomment', port = 3306)
 
 	return conn
 
@@ -24,9 +24,9 @@ def init_connection():
 
 # Arguments Explaination:
 
-# 			user_name : user_name is a user's login name, it will become unique in the future version depending the design
+# 						user_name : user_name is a user's login name, it will become unique in the future version depending the design
 
-#			  	which means, it is not unique, you can use the same name to register as many times as you can in current version
+#			  						which means, it is not unique, you can use the same name to register as many times as you can in current version
 
 
 
@@ -232,7 +232,7 @@ def get_all_history(url, md5):
 
 		# To generate a sql query text
 
-		sql = '''select c.commentTime, c.commentContent,us.uName from comments c, url u,users us where u.md5 = %s and u.indexId = c.urlID and c.uID = us.indexID order by c.commentTime desc limit 0,2'''
+		sql = '''select c.commentTime, c.commentContent,us.uName from comments c, url u,users us where u.md5 = %s and u.indexId = c.urlID and c.uID = us.indexID order by c.commentTime desc limit 0,5'''
 
 		# To execute the generated sql text
 

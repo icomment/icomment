@@ -1,9 +1,0 @@
-Bug bounty
-if you find any bugs leave issueses except the following, you will be rewarded 
-1 points for bug on our application.
-3 points for bug in gevent-socketio or gevent-websocket library.
-
-1.sql injection in server code 
-2.XSS in message sending from one client to another(also in nickname)
-
- 

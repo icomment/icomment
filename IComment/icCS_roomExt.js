@@ -4,29 +4,112 @@
 //Define: the extra methods of iCommentRoom which utilizes chrome spec funcions
 var chromePort;
 var roomID;
+var isUserEnterRoom=false;
+var isShowingLoginWin=false;
+console.log('append room');
 
-function message (from, msg) {
-    $('#lines').append($('<p>').append($('<b>').text(from), msg));
+//Dom-ID assign
+var icRoom={};
+var idp = icRoom._idPool={};
+idp.container	='#icSideBar';
+idp.IDBase		=idp.container+'-';
+idp.room 		=idp.IDBase+'chat';
+
+idp.currMsg 	= idp.IDBase+'message';
+idp.userList 	= idp.IDBase+'nicknames';
+idp.msgBoard 	= idp.IDBase+'lines';
+idp.nickName 	= idp.IDBase+'nick';
+
+
+idp.setNameForm = idp.IDBase+'set-nickname';
+idp.sendMsgForm = idp.IDBase+'send-message';
+
+
+idp.loginBtn 	= idp.IDBase+'loginBtn';
+idp.sendMsgBtn  = idp.IDBase + 'sendMsgBtn';
+idp.cancelLoginBtn =idp.IDBase+'cancelLoginBtn';
+
+
+
+function message (from, msg, time) {
+	var msgList = msg.split('\n');
+		//$('<span>').text(msg);
+		//$(idp.msgBoard).append(
+    var pList=[];// $('<p>');
+				
+	if(time !=undefined && time!=''){
+		pList.push($('<b>').text(from+' '),time+'<br>' );
+	}else{
+		pList.push($('<b>').text(from+': '),'<br>' );	
+	}
+	
+    if( msgList.length<1){
+    	pList.push($('<z>').text(msgList[0]))
+   	}else{
+   		var i=0;
+   		for(;i<msgList.length-1;i++){
+    		pList.push($('<z>').text(msgList[i]),'<br>' );
+    		
+    	}
+    	pList.push($('<z>').text(msgList[i]) );
+    }
+    $(idp.msgBoard).append($('<p>').append(pList) );
+    //p.innerText +=msgList[0];
+
 }
+
+
 function clear () {
-    $('#message').val('').focus();
+    $(idp.currMsg).val('').focus();
 };
 
+function userWatchRoom(){
+	isUserEnterRoom=false;
+	isShowingLoginWin=false;
+	$(idp.room).removeClass('tryLogin')
+	$(idp.room).addClass('notLogin');
+
+	console.log('userWatchRoom');
+}
+function userTryEnterRoom(){
+	isShowingLoginWin=true;
+	$(idp.room).removeClass('notLogin')
+   	$(idp.room).addClass('tryLogin')
+
+   	console.log('tryEnterRoom');
+}
+function userEnterRoom(){
+	isUserEnterRoom=true;
+	isShowingLoginWin=false;
+	$(idp.room).removeClass('notLogin');
+	$(idp.room).removeClass('tryLogin');
+
+	$(idp.room).addClass('nickname-set');
+
+	clear();
+	//change login btn
+	$(idp.loginBtn).text('Hi~')	
+	console.log('userEnterRoom');
+}
+
+
+//---------init when load whole DOM--------
 $(document).ready(function () {
-	console.log('01 Page Doc loading compelete');
-	//alert('load');
-/*
-chrome.extension.sendMessage({greeting: "hello"}, function(response) {
-  console.log(response.farewell);
-});
-*/
-	chromePort = chrome.extension.connect(); // this will auto trigger the action of joining the room 
+	console.log('01 Page DOM load compeletely');
+
+	//default action
+	$(idp.container).css('display','block'); 	//turn one and show
+	userWatchRoom();							//close some views
+	//renderTextArea();							//re-render textarea
+
+ 	//when docInit, make this content script connected to background.js 
+ 	// this will auto trigger the action of joining the room 
+	chromePort = chrome.extension.connect(); 
 	var port =chromePort;
 
-	console.log("02 init conn-ext => join room");
+	console.log("02 init conn-ext => try to join room");
 	
 	//check whether user has finish login action
-	port.postMessage({type:"checkLogin"});
 
 
 	port.onMessage.addListener(function(evt){
@@ -37,72 +120,105 @@ chrome.extension.sendMessage({greeting: "hello"}, function(response) {
 
 		}else if (evt.type=="joinRoom"){
 			roomID = evt.data;
-			$('#chat').addClass('connected');
+
+			console.log("02 init conn-ext <= join room succ,roomID="+roomID);
+			$(idp.room).addClass('connected');
+		
+			port.postMessage({type:"checkLogin"});
+
 
 		}else if (evt.type=="announcement"){	
-    		$('#lines').append($('<p>').append($('<em>').text(evt.data)));
+    		$(idp.msgBoard).append($('<p>').append($('<em>').text(evt.data)));
 	
 		}else if (evt.type=="refreshUserList"){
 
 			nicknames = evt.data;
-		    $('#nicknames').empty().append($('<span>Online: </span>'));
+		    $(idp.userList).empty().append($('<span>Online: </span>'));
 		    for (var i in nicknames) {
-		    $('#nicknames').append($('<b>').text(nicknames[i]));
+		    	$(idp.userList).append($('<b>').text(nicknames[i]));
 		    }
 
 		}else if(evt.type=="checkLogin"){
-			if(evt.data==true){
-				//user has login, remove set nickname form
-				$('#chat').addClass('nickname-set');
-				clear();
+			if(evt.data==true){				
+				userEnterRoom();
+			}else{
+				userWatchRoom();
 			}
 
+		}else if(evt.type=="recvHistoryMsg"){
+			msgList = evt.data;
+			//[["2012-11-22 08:28:22", "msg time2", "we"], ["2012-11-22 08:28:08", "msg time1", "we"]]
+			var len  =msgList.length;
+			var msg;
+			for(var i=0;i<len;i++){
+				msg=msgList[i];
+				//console.log(msg[0] +'  '+ msg[1] +"   "+msg[2] );
+				message(msg[2],msg[1],msg[0]);
+
+			}
 		}
 
 	})
 
-	// DOM manipulation
+	// bimd DOM based actions&listeners
 	$(function () {
 
 		//only allow user login once on any chatting page 
-	    $('#set-nickname').submit(function (evt) {
-	        evt.preventDefault();
-	        port.postMessage({type:"login",data: $('#nick').val()})
+		$(idp.loginBtn).click(function (evt) {
+	    	evt.preventDefault();   	
+    		if(!isUserEnterRoom && !isShowingLoginWin){
+				userTryEnterRoom();
+    		}
+		    return false;
+	    });
 
-	        LocalUserName = $('#nick').val();
+		$(idp.cancelLoginBtn).click(function (evt) {
+	    	evt.preventDefault();   	
+    		if(!isUserEnterRoom && isShowingLoginWin){
+				userWatchRoom();
+    		}
+		    return false;
+	    });
+
+		//triggered by clicking doLoginBtn('Enter') or pressing EnterKey in LoginWin 
+	    $(idp.setNameForm).submit(function (evt) {
+	        evt.preventDefault();
+
+
+	        LocalUserName = $(idp.nickName).val();
+	        port.postMessage({type:"login",data: LocalUserName })
+
    			clear();
 
+   			//ToFix if login action fail -> add error process
    			//change chat page view 
-   			$('#chat').addClass('nickname-set');
-
-	        //todo add error test
-/*
-	        .emit('nickname', $('#nick').val(), function (set) {
-	            if (!set) {
-	                clear();
-	                return $('#chat').addClass('nickname-set');
-	            }
-	            $('#nickname-err').css('visibility', 'visible');
-	        });
-*/
-
+   			$(idp.room).addClass('nickname-set');
+   			userEnterRoom();
 	        return false;
 	    });
 
-	    $('#send-message').submit(function (evt) {
+	    $(idp.sendMsgForm).submit(function (evt) {
 	    	evt.preventDefault();   	
 	    	//show on sender's page
-		    message('me', $('#message').val());
+			var currMsg =$(idp.currMsg).val();
+			//don't send empty msg
+			if($.trim(currMsg)==''){
+	    		return false;
+	    	}
+ 			message('me', currMsg);
 
 		    //post to server side
-		    port.postMessage({type:"newMessage",data: {msg:$('#message').val(),roomID:roomID} } )
+		    port.postMessage({
+		    	type:"newMessage",
+		    	data: {msg:currMsg,roomID:roomID} 
+		    })
     		clear();
 /*		   	
 		    socket.emit('user message', $('#message').val());
 		    clear();
 		    
 */
-			$('#lines').get(0).scrollTop = 10000000;
+			$(idp.msgBoard).get(0).scrollTop = 10000000;
 
 		    return false;
 	    });

@@ -1,4 +1,4 @@
 gevent
-django
+MySQL-python
 gevent-websocket
 gevent-socketio
