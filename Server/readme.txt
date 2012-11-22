@@ -1,19 +1,48 @@
-//install development eviroment 
-apt-get install python-dev 
-apt-get install libevent-dev
+#installation guide for linux
 
-//install pip
-easy_install pip 
-pip install virtualenv 
-virtualenv . 
-source ./bin/activate
+We assume you can finish two tasks:
+1 install python 2.7.x
+2 install install MySQL 5.0+ 
 
-//pip get the lists
-pip install gevent 
-pip install gevent-socketio
-pip install gevent-websocket
+------------
+Installation
+------------
 
-//run server
-python run_CharSocketIO.py
+1 Getcode from git and setup your python virtualEnv
+	git clone git://github.com/icomment/icomment.git 
+    cd icomment
+    easy_install pip
+    pip install virtualenv
+    virtualenv .
+    source ./bin/activate
 
-Mysql database (see icomment.sql)
+2 Install libevent as it is necessary for gevent lib
+	apt-get install libevent-dev
+
+3 Install other python lib we need
+	pip install -r pip_requirements.txt
+
+4 Setup database
+	(assume your current dir is icProject and you have started your mysql server)
+	mysql -u 'root' -p <icomment.sql
+
+	then you need input your mysql root password to execute all SQL cmd in this .sql file.
+
+
+-------
+Running
+-------
+Start the server:
+
+1 Enter project's virtualEnv
+	Assume you are still in the virtualEnv that you just setup, otherwise enter the directory of icProject again and type 
+		source ./bin/activate
+	to active this virtualEnv
+
+2 Configure your mysql connection
+	modify your dbconnect.py, set right password  in init_connection() function
+
+3 Run:	
+    python run_server.py
+
+    you can change the default port 8080, but keep in mind this would also affect the port of websocket connection address used by client.
