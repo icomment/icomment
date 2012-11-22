@@ -10,8 +10,7 @@ create table users
 	# User Name
 	uName varchar(20) not null,
 	# User registers datetime
-	regDate datetime not null,
-
+	regDate datetime not null
 );
 # Test cases
 insert into users values(null,'user1',now());
