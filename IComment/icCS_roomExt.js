@@ -6,6 +6,7 @@ var chromePort;
 var roomID;
 var isUserEnterRoom=false;
 var isShowingLoginWin=false;
+console.log('append room');
 
 //Dom-ID assign
 var icRoom={};
@@ -20,7 +21,9 @@ idp.msgBoard 	= idp.IDBase+'lines';
 idp.nickName 	= idp.IDBase+'nick';
 
 idp.loginBtn 	= idp.IDBase+'loginBtn';
-idp.cancelLoginBtn =idp.IDBase+'cancelLoginBtn'
+idp.cancelLoginBtn =idp.IDBase+'cancelLoginBtn';
+
+idp.sendMsgBtn  = idp.IDBase + 'sendMsgBtn';
 idp.setNameForm = idp.IDBase+'set-nickname';
 idp.sendMsgForm = idp.IDBase+'send-message';
 
@@ -45,6 +48,7 @@ function message (from, msg) {
     //p.innerText +=msgList[0];
 
 }
+
 function clear () {
     $(idp.currMsg).val('').focus();
 };

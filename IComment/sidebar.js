@@ -86,7 +86,7 @@ logoImgSrc = chrome.extension.getURL("logo.png");
 		    +"<form id='icSideBar-send-message'>"
 		      
 		      +"<textarea id='icSideBar-message' class='icSiderBar-default' style='width:234px;height:80px;'></textarea>"
-		      +"<button>Send</button>"
+		      +"<button id='icSideBar-sendMsgBtn'>Send</button>"
 		    +"</form>"
 		+"<div>"
 	  +"</div>")

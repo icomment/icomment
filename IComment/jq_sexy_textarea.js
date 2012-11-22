@@ -1,4 +1,5 @@
 // Sexy Tools Textarea jQuery
+
 $(function(){
     $("textarea.icSiderBar-default").each(function(index){
     // HTML Structure
@@ -51,3 +52,4 @@ $(function(){
 
  })
 });
+console.log('append textArea')
