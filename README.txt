@@ -8,7 +8,7 @@ The primary goal of this project is to provide the convenience for the online re
 So, basically this is a online chatting system and each chatting room is based on a certain page-actually, the url of that page. 
 
 $2 Installation
-This project cotains both client and backend server. 
+This project comprises both client and backend server. 
 The client is a chrome extension that you need install to run. Since right now we've not put it onto chrome's app store, please go to the readme in the IComment directory for the guide of client installation. 
 The server is written by python and use mysql as DB. Check the readme in the server directory for its deployment info.
 
