@@ -9,8 +9,8 @@ var isServerOpen=false;
 
 //wsHost= "http://localhost:8080" //server& socket port
 
-//var wsHost ="http://50.19.165.203:8000"
-var wsHost="http://127.0.0.1:8080";
+var wsHost ="http://50.19.165.203:8000"
+//var wsHost="http://127.0.0.1:8080";
 
 var url_re =/[a-zA-z]+:\/\/(\S+)/ ;
 var CNN_Url_Reg= /[a-zA-Z]+:\/\/(\w+\.)+cnn\.com\/20[0-1][0-9]\/[0-1][0-9]\/[0-3][0-9]\/\w+/ ;

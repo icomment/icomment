@@ -1,6 +1,6 @@
 ====== ICommet Project ========
 Poly Application&Security Course Project
-version:0.21
+version:0.3.x 2012/11/22
 original members: Safaei Sivash, Lei Tang（raybit）, Ronghua Xu, Xiaofeng Chen
 
 $1 Intro
