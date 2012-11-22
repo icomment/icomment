@@ -20,20 +20,29 @@ idp.userList 	= idp.IDBase+'nicknames';
 idp.msgBoard 	= idp.IDBase+'lines';
 idp.nickName 	= idp.IDBase+'nick';
 
-idp.loginBtn 	= idp.IDBase+'loginBtn';
-idp.cancelLoginBtn =idp.IDBase+'cancelLoginBtn';
 
-idp.sendMsgBtn  = idp.IDBase + 'sendMsgBtn';
 idp.setNameForm = idp.IDBase+'set-nickname';
 idp.sendMsgForm = idp.IDBase+'send-message';
 
 
-function message (from, msg) {
+idp.loginBtn 	= idp.IDBase+'loginBtn';
+idp.sendMsgBtn  = idp.IDBase + 'sendMsgBtn';
+idp.cancelLoginBtn =idp.IDBase+'cancelLoginBtn';
+
+
+
+function message (from, msg, time) {
 	var msgList = msg.split('\n');
 		//$('<span>').text(msg);
 		//$(idp.msgBoard).append(
     var pList=[];// $('<p>');
-    	pList.push($('<b>').text(from+': '),'<br>' );
+				
+	if(time !=undefined && time!=''){
+		pList.push($('<b>').text(from+' '),time+'<br>' );
+	}else{
+		pList.push($('<b>').text(from+': '),'<br>' );	
+	}
+	
     if( msgList.length<1){
     	pList.push($('<z>').text(msgList[0]))
    	}else{
@@ -48,6 +57,7 @@ function message (from, msg) {
     //p.innerText +=msgList[0];
 
 }
+
 
 function clear () {
     $(idp.currMsg).val('').focus();
@@ -100,7 +110,6 @@ $(document).ready(function () {
 	console.log("02 init conn-ext => try to join room");
 	
 	//check whether user has finish login action
-	port.postMessage({type:"checkLogin"});
 
 
 	port.onMessage.addListener(function(evt){
@@ -112,8 +121,11 @@ $(document).ready(function () {
 		}else if (evt.type=="joinRoom"){
 			roomID = evt.data;
 
-			console.log("join room succ");
+			console.log("02 init conn-ext <= join room succ,roomID="+roomID);
 			$(idp.room).addClass('connected');
+		
+			port.postMessage({type:"checkLogin"});
+
 
 		}else if (evt.type=="announcement"){	
     		$(idp.msgBoard).append($('<p>').append($('<em>').text(evt.data)));
@@ -133,6 +145,17 @@ $(document).ready(function () {
 				userWatchRoom();
 			}
 
+		}else if(evt.type=="recvHistoryMsg"){
+			msgList = evt.data;
+			//[["2012-11-22 08:28:22", "msg time2", "we"], ["2012-11-22 08:28:08", "msg time1", "we"]]
+			var len  =msgList.length;
+			var msg;
+			for(var i=0;i<len;i++){
+				msg=msgList[i];
+				//console.log(msg[0] +'  '+ msg[1] +"   "+msg[2] );
+				message(msg[2],msg[1],msg[0]);
+
+			}
 		}
 
 	})

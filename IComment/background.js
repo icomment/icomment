@@ -12,7 +12,7 @@ var isServerOpen=false;
 //wsHost ="http://50.19.165.203:80"
 var wsHost="http://127.0.0.1:8080";
 
-var url_re =/[a-zA-z]+:\/\/([^s]*)/ ;
+var url_re =/[a-zA-z]+:\/\/(\S+)/ ;
 var CNN_Url_Reg= /[a-zA-Z]+:\/\/(\w+\.)+cnn\.com\/20[0-1][0-9]\/[0-1][0-9]\/[0-3][0-9]\/\w+/ ;
 //match http://www.cnn.com/2012/11/21/showbiz/celebrity-news-gossip/celebrity-thanksgiving-2012-gallery/index.html?hpt=en_c1
 
@@ -37,6 +37,78 @@ var socket = io.connect(wsHost);
 
 //bind onConn 
 chrome.extension.onConnect.addListener(onConnHandler);
+
+function formatURL(url){
+  url_re.test(url); //remove protocol type 
+  return RegExp.$1
+}
+
+function encodeURL2RoomID(url){
+  return CryptoJS.MD5(url).toString(CryptoJS.enc.Hex);  //processing url and return a md5  
+}
+ 
+/* Evt Listener:
+  after a new webpage(in the specified domain ) opened in the tab, it trigger this evt to 
+    1 record new url, and its port
+    2 tell server that it need join that url chat room
+    3 define the handler to 
+*/
+function onConnHandler(port){  
+    console.log('onConnHandler newtab-> sendID:'+port.sender.id+ ',tabID:'+port.sender.tab.id);
+    if (isServerOpen ==false) {
+      console.log("error: page conn fail due to server status");
+      return ;
+    }
+
+    var tabUrl = port.sender.tab.url;
+
+    console.log("tabUrl="+tabUrl);
+    var url = formatURL(tabUrl);    
+
+    console.log("onConn 2 url:"+url)
+
+    var roomID= encodeURL2RoomID(url); //roomID should be a md5
+
+    //1 record 
+    icBG.r2t[roomID]=port.sender.tab.id; //TO fix ,if allow 1url --> n tabs
+    icBG.t2r[port.sender.tab.id] = roomID;
+
+    icBG.t2r[port.sender.tab.id] = port;
+    icBG.r2p[roomID]=port;
+
+    //2 send join room request
+    socket.emit('join',url,roomID, function (data) {
+        //console.log("test return para:"+data)
+        
+        //onConn room
+        port.postMessage({type:"joinRoom",data:roomID});// show connected
+    });
+
+
+    //3 handlers to recv messages from  contentscripts 
+    port.onMessage.addListener(function(evt) {
+
+      if(evt.type == "login"){
+        //the login evt only happen once 
+        if(icBG.isLogin ==false){
+          socket.emit('nickname', evt.data,roomID);
+
+          //todo if login false, or change to SNS account
+          icBG.isLogin =true;
+          icBG.username = evt.data;
+
+        }      
+      }else if(evt.type == "newMessage"){
+        console.log("send newMessage in room:"+evt.data.roomID);
+        socket.emit('user message', evt.data.msg, evt.data.roomID); //v0.2 IF pass msg,rID to server 
+      
+      }else if(evt.type == "checkLogin"){
+          
+        port.postMessage({type:"checkLogin",data:icBG.isLogin})
+      }
+    });
+
+}
 
 //01 programmatic injection
 //any new created/updated tab page will check whether match our filter, 
@@ -73,15 +145,7 @@ chrome.tabs.onRemoved.addListener(function(tabId,removeInfo) {
 });
 
 
-function formatURL(url){
-  url_re.test(url); //remove protocol type of web url
-  return CryptoJS.MD5(RegExp.$1)
-}
 
-function encodeURL2RoomID(url){
-  //processing url and return a md5  
-  return url.toString(CryptoJS.enc.Hex);
-}
 
 
 //=== socket passive handlers==========
@@ -113,6 +177,15 @@ socket.on('msg_to_room', function (roomID,from,msg) {
 
 });
 
+
+socket.on('history', function (msgList,roomID) {
+    console.log("msgList:"+msgList );
+
+    var port = icBG.r2p[roomID];
+    port.postMessage({type:"recvHistoryMsg",data: JSON.parse(msgList) })
+
+});
+
 //Todo fix these three functions
 socket.on('reconnect', function () {
     console.log("reconnect to server side!")
@@ -125,7 +198,7 @@ socket.on('reconnecting', function () {
 });
 
 socket.on('error', function (e) {
-     alert('System', e ? e : 'A unknown error occurred, server may be not running!')
+     console('System error:A unknown error occurred, server may be not running!')
     //message('System', e ? e : 'A unknown error occurred');
 });
 
@@ -134,68 +207,6 @@ socket.on('error', function (e) {
 
 
 
-
- 
-/* Evt Listener:
-  after a new webpage(in the specified domain ) opened in the tab, it trigger this evt to 
-    1 record new url, and its port
-    2 tell server that it need join that url chat room
-    3 define the handler to 
-*/
-
-function onConnHandler(port){  
-  	console.log('onConnHandler newtab-> sendID:'+port.sender.id+ ',tabID:'+port.sender.tab.id);
-    if (isServerOpen ==false) {
-      console.log("error: page conn fail due to server status");
-      return ;
-    }
-
-  	var url = port.sender.tab.url;
-
-    console.log("onConn 2 url:"+url)
-
-  	var roomID= encodeURL2RoomID(url); //roomID should be a md5
-
-    //1 record 
-  	icBG.r2t[roomID]=port.sender.tab.id; //TO fix ,if allow 1url --> n tabs
-    icBG.t2r[port.sender.tab.id] = roomID;
-
-    icBG.t2r[port.sender.tab.id] = port;
-  	icBG.r2p[roomID]=port;
-
-    //2 send join room request
-    socket.emit('join',roomID, function (data) {
-        //console.log("test return para:"+data)
-        
-        //onConn room
-        port.postMessage({type:"joinRoom",data:roomID});// show connected
-    });
-
-
-    //3 handlers to recv messages from  contentscripts 
-    port.onMessage.addListener(function(evt) {
-
-    	if(evt.type == "login"){
-        //the login evt only happen once 
-        if(icBG.isLogin ==false){
-          socket.emit('nickname', evt.data,roomID);
-
-          //todo if login false, or change to SNS account
-          icBG.isLogin =true;
-          icBG.username = evt.data;
-
-        }      
-    	}else if(evt.type == "newMessage"){
-        console.log("send newMessage in room:"+evt.data.roomID);
-    		socket.emit('user message', evt.data.msg, url); //evt.data.roomID);
-    	
-      }else if(evt.type == "checkLogin"){
-          
-        port.postMessage({type:"checkLogin",data:icBG.isLogin})
-      }
-    });
-
-}
 
 
 
