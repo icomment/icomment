@@ -2,25 +2,86 @@
 //Author : Lei Tang
 
 
-//------init socket IO--------
-//Define socket related ======
-WEB_SOCKET_DEBUG = true;
-
-// socket.io specific code
-//wsHost= "http://localhost:8080" //server& socket port
-
-
-url_re =/[a-zA-z]+:\/\/([^s]*)/
-
-//wsHost= "http://192.168.1.101:8080" //server& socket port
-wsHost="http://127.0.0.1:8080"
-//wsHost ="http://50.19.165.203:80"
-
-
-
-var socket = io.connect(wsHost);
+//------init cfg -------
+var WEB_SOCKET_DEBUG = true;
 var isServerOpen=false;
+// socket.io specific code
 
+//wsHost= "http://localhost:8080" //server& socket port
+//wsHost= "http://192.168.1.101:8080" //server& socket port
+//wsHost ="http://50.19.165.203:80"
+var wsHost="http://127.0.0.1:8080";
+
+var url_re =/[a-zA-z]+:\/\/([^s]*)/ ;
+var CNN_Url_Reg= /[a-zA-Z]+:\/\/(\w+\.)+cnn\.com\/20[0-1][0-9]\/[0-1][0-9]\/[0-3][0-9]\/\w+/ ;
+//match http://www.cnn.com/2012/11/21/showbiz/celebrity-news-gossip/celebrity-thanksgiving-2012-gallery/index.html?hpt=en_c1
+
+
+
+//===> Define the functions that manage all the tabs/rooms 
+var icBG={}; // icommentBackground
+
+icBG.r2t={}; //r2t is roomID to tabID
+icBG.t2r={}; //t2p is tabID to roomID
+
+icBG.t2p={}; //r2t is roomID to related port map
+icBG.r2p={}; //t2r is roomID to related port map
+
+icBG.isLogin=false;
+icBG.username= undefined; 
+
+
+
+//00 setup websocket conn at the very beginning, if this extension is enabled
+var socket = io.connect(wsHost);
+
+//bind onConn 
+chrome.extension.onConnect.addListener(onConnHandler);
+
+//01 programmatic injection
+//any new created/updated tab page will check whether match our filter, 
+//if passed & server is open, we inject our content scripts(css+js) into original webpage
+chrome.tabs.onUpdated.addListener(function( tabId,  changeInfo, tab) {
+    var tabUrl = tab.url;
+ 
+    if (tabUrl == undefined || changeInfo.status != "complete") {
+        return ;
+    }
+    if(CNN_Url_Reg.test(tabUrl)){      // pass reg scan
+      
+      if ( isServerOpen){
+        chrome.tabs.executeScript(tabId, { file: "jqmin.js" }, function() { 
+          chrome.tabs.insertCSS(tabId, { file: "icCS.css" });
+          chrome.tabs.executeScript(tabId, { file: "sidebar.js" });
+          chrome.tabs.executeScript(tabId, { file: "jq_sexy_textarea.js" });
+          chrome.tabs.executeScript(tabId, { file: "icCS_roomExt.js" });                                   
+        }); 
+
+      }else{
+        console.log("Need not do Content Scripts injection, server is down!") 
+      }
+    }
+});
+
+chrome.tabs.onRemoved.addListener(function(tabId,removeInfo) {
+    var roomID = icBG.t2r[tabId];
+    if(roomID !== undefined){
+      socket.emit("leave",roomID)
+    }
+      
+
+});
+
+
+function formatURL(url){
+  url_re.test(url); //remove protocol type of web url
+  return CryptoJS.MD5(RegExp.$1)
+}
+
+function encodeURL2RoomID(url){
+  //processing url and return a md5  
+  return url.toString(CryptoJS.enc.Hex);
+}
 
 
 //=== socket passive handlers==========
@@ -55,9 +116,7 @@ socket.on('msg_to_room', function (roomID,from,msg) {
 //Todo fix these three functions
 socket.on('reconnect', function () {
     console.log("reconnect to server side!")
-    //alert('reconnect')
-    //$('#lines').remove();
-    //message('System', 'Reconnected to the server');
+
 });
 
 socket.on('reconnecting', function () {
@@ -72,52 +131,9 @@ socket.on('error', function (e) {
 
 
 //=========================================================
-//Define the functions that manage all the tabs/rooms 
-
-var icBG={};
-
-//r2t is roomID to tabID
-icBG.r2t={}; 
-icBG.t2r={};
-
-//t2p is tabID to port map
-icBG.t2p={}; 
-
-//r2t is roomID to related port map
-icBG.r2p={}
-
-//t2r is roomID to related port map
 
 
-icBG.isLogin=false;
-icBG.username= undefined; 
 
-/*
-chrome.extension.onMessage.addListener(
-  function(request, sender, sendResponse) {
-    console.log(sender.tab ?
-                "from a content script:" + sender.tab.url :
-                "from the extension");
-    if (request.greeting == "hello")
-      sendResponse({farewell: "goodbye"});
-  });
-console.log('add listener in bg')
-*/
-function formatURL(url){
-  url_re.test(url)
-
-  return CryptoJS.MD5(RegExp.$1)
-
-}
-
-function encodeURL2RoomID(url){
-  //processing url and return a md5
-  
-  //remove protocol type of web url
-  return url.toString(CryptoJS.enc.Hex);
-  //console.log(roomID);
-	//return roomID
-}
 
  
 /* Evt Listener:
@@ -126,6 +142,7 @@ function encodeURL2RoomID(url){
     2 tell server that it need join that url chat room
     3 define the handler to 
 */
+
 function onConnHandler(port){  
   	console.log('onConnHandler newtab-> sendID:'+port.sender.id+ ',tabID:'+port.sender.tab.id);
     if (isServerOpen ==false) {
@@ -143,12 +160,12 @@ function onConnHandler(port){
   	icBG.r2t[roomID]=port.sender.tab.id; //TO fix ,if allow 1url --> n tabs
     icBG.t2r[port.sender.tab.id] = roomID;
 
-    icBG.t2r[port.sender.tab.id] = port
+    icBG.t2r[port.sender.tab.id] = port;
   	icBG.r2p[roomID]=port;
 
     //2 send join room request
     socket.emit('join',roomID, function (data) {
-        console.log("test return para:"+data)
+        //console.log("test return para:"+data)
         
         //onConn room
         port.postMessage({type:"joinRoom",data:roomID});// show connected
@@ -179,19 +196,6 @@ function onConnHandler(port){
     });
 
 }
-chrome.extension.onConnect.addListener(onConnHandler);
 
-
-
-chrome.tabs.onRemoved.addListener(function(tabId,removeInfo) {
-    var roomID = icBG.t2r[tabId];
-    if(roomID !== undefined){
-      socket.emit("leave",roomID)
-    }
-      
-
-});
-
-//the global socket connected
 
 
