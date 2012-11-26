@@ -1,5 +1,4 @@
 # import from some of the requirement libraries
-
 import hashlib
 
 from dbconnect import *
@@ -14,6 +13,7 @@ from gevent import monkey; monkey.patch_all()
 
 from socketio.mixins import RoomsMixin, BroadcastMixin
 
+
 # Global dictionary, tot store roomID and the users in it.
 ACTIVE = {}
 
@@ -21,64 +21,70 @@ ACTIVE = {}
 class ChatNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
 
     # When a user create a name, store this name in DB
+
     def on_nickname(self, nickname, rID):
 
-        if(len(nickname) > 12):
-            self.emit('invalid_user_name','Invalid user name')
-        else:
-            self.request['nicknames'].append(nickname)
+        if nickname.isalnum() == True:
 
-            # To add user into the database
-            user_register(nickname)
+            if(len(nickname) > 20):
 
-            print 'Nickname[' + nickname + '] stores successfully!'
-
-            self.socket.session['nickname'] = nickname
-
-            roomID = rID;#.upper()
-
-            # To test when there is at least one person in the room
-            # test=[]
-            # test.append('hoho')
-            # ACTIVE[roomID]=test
-
-            # To add user into the room list
-            # Room is not empty
-            if ACTIVE.get(roomID) != None:
-
-                print nickname + ' joins room, roomID is ' + roomID
-
-                ACTIVE[roomID].append(nickname)
-
-            # Room is empty
-
+                self.emit('invalid_user_name','Invalid user name')
             else:
+                self.request['nicknames'].append(nickname)
 
-                print nickname + ' is the first person in this room, roomID is ' + roomID
+                # To add user into the database
+                user_register(nickname)
 
-                nameList = []
+                print 'Nickname[' + nickname + '] stores successfully!'
 
-                nameList.append(nickname)
+                self.socket.session['nickname'] = nickname
 
-                ACTIVE[roomID] = nameList
+                roomID = rID;#.upper()
 
-            # To broadcast to all the users in the room
+                # To test when there is at least one person in the room
+                # test=[]
+                # test.append('hoho')
+                # ACTIVE[roomID]=test
 
-            self.broadcast_to_room(roomID, 'announcement', roomID,'%s has connected' % nickname)
+                # To add user into the room list
+                # Room is not empty
 
-            self.broadcast_to_room(roomID, 'nicknames',roomID, self.request['nicknames'])
+                if ACTIVE.get(roomID) != None:
+
+                    print nickname + ' joins room, roomID is ' + roomID
+
+                    ACTIVE[roomID].append(nickname)
+
+                # Room is empty
+
+                else:
+
+                    print nickname + ' is the first person in this room, roomID is ' + roomID
+
+                    nameList = []
+
+                    nameList.append(nickname)
+
+                    ACTIVE[roomID] = nameList
+
+                # To broadcast to all the users in the room
+
+                self.broadcast_to_room(roomID, 'announcement', roomID,'%s has connected' % nickname)
+
+                self.broadcast_to_room(roomID, 'nicknames',roomID, self.request['nicknames'])
+
+        else:
+
+            self.emit('invalid_user_name','Invalid user name')
 
 
     # When the user loses connection, call this
-
     def recv_disconnect(self):
 
         # To remove nickname from the list.
-
         nickname = self.socket.session.get('nickname')
 
         # To remove user from user's socket session
-
         if nickname != None:
 
             print "recv disconnected, remove user:" + nickname
@@ -86,11 +92,9 @@ class ChatNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
             self.request['nicknames'].remove(nickname)
 
             # To get the set of roomIDs of the current attending
-
             roomSet = self.socket.session.get('roomSet')
 
             # To broadcast to other people in the room
-
             if roomSet != None:
 
                 for roomID in roomSet:
@@ -100,7 +104,6 @@ class ChatNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
                     self.broadcast_to_room(roomID, 'nicknames', roomID, self.request['nicknames'])
 
         # To remove the user from all the rooms he is attending
-
         for rID in roomSet:
 
             if nickname in ACTIVE[rID]:
@@ -110,21 +113,16 @@ class ChatNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
         self.disconnect(silent = True)
 
     # When a new user joins in, trigger this function
-
     def on_join(self, url, rID):
 
         roomID = rID;#.upper()
 
         # To check if the current URL is supported
-
         # self.url = url
-
         # result = check_url(url)
-
         # self.emit('status', result)
 
         # To generate roomID and compare with roomID that is from client side
-
         md5 = hashlib.md5()
 
         md5.update(url)
@@ -132,7 +130,6 @@ class ChatNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
         hexmd5 = md5.hexdigest();#.upper()
 
         # To compare, if false, return error msg
-
         if(hexmd5 == roomID):
 
             print "join-roomID:", roomID
@@ -140,7 +137,6 @@ class ChatNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
             self.join(roomID)
 
             # To add roomID into ACTIVE
-
             ACTIVE = {}.fromkeys(roomID)
 
             print 'create room, roomID is ' + roomID
@@ -158,13 +154,10 @@ class ChatNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
                 roomSet.add(roomID)
 
             # To check whether user has login, if he has done, then broadcast the evt:he join the room
-
             # To when this broadcast trigger, no "on_nicknname" will be called from client
-
             nickname = self.socket.session.get('nickname')
 
             # To broadcast to other people in the room
-
             if nickname != None:
 
                 self.broadcast_to_room(roomID, 'announcement', roomID,'%s has connected' % nickname)
@@ -172,7 +165,6 @@ class ChatNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
                 self.broadcast_to_room(roomID, 'nicknames',roomID, self.request['nicknames'])
 
             # To get past comments and send to client
-
             self.emit('history', get_all_history(url,rID),roomID)
 
             print 'send history'
@@ -180,7 +172,6 @@ class ChatNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
         else:
 
             # To return this if md5s dont match
-
             return 'unmatched roomID'
 
     # When a user leaves, call this function
@@ -194,11 +185,9 @@ class ChatNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
         self.leave(roomID)
 
         # get('roomSet') can avoid error msg
-
         roomSet = self.socket.session.get('roomSet')
 
         # To remove roomID when he leaves the room
-
         if roomSet != None:
 
             roomSet.remove(roomID)
@@ -212,7 +201,6 @@ class ChatNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
             self.emit_to_room(roomID, 'nicknames',roomID, self.request['nicknames'])
 
         # To remove the user from the room he is leaving            
-
         if nickname in ACTIVE[roomID]:
 
             ACTIVE[roomID].remove(nickname)
@@ -222,35 +210,27 @@ class ChatNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
     def on_user_message(self, msg, rID):
 
         # To generate md5(rID)
-
         '''  
         md5 = hashlib.md5()
-
         md5.update(url)
-
         hexmd5 = md5.hexdigest().upper()
-
         roomID = hexmd5;
         '''
 
         #To do check rID whether is in user's roomSet
-
         roomID = rID;#.upper();
-
+        
         print 'msg=',msg,'roomID=',roomID
 
         # To store user's comment
-
         store_comment(self.socket.session.get('nickname'), msg, roomID)
 
         #Emit to room will not put msg back to the msg-sender 
-
         self.emit_to_room(roomID, 'msg_to_room',roomID, self.socket.session['nickname'], msg)
 
         print 'Comment [' + msg + '] stores successfully'
 
     #Similar to emit_to_room function of RoomMixin
-
     #But send msg to all, not others in the room
 
     def broadcast_to_room(self, room, event, *args):
@@ -276,7 +256,6 @@ class ChatNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
             if room_name in socket.session['rooms']:
 
                 socket.send_packet(pkt)
-
 
 # Class Application, to generate protocol package
 
@@ -341,7 +320,8 @@ class Application(object):
         else:
 
             return not_found(start_response)
-
+            
+            
 
 # not found function, it is for 404 error
 
@@ -350,7 +330,8 @@ def not_found(start_response):
     start_response('404 Not Found', [])
 
     return ['<h1>Not Found</h1>']
-
+    
+    
 
 # __main__ function, keep listening on port 8080 receiving connection from client side
 
