@@ -49,7 +49,7 @@ class ChatNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
                 # To add user into the room list
                 # Room is not empty
 
-                if ACTIVE.get(roomID) != None:
+                if ACTIVE.has_key(roomID):
 
                     print nickname + ' joins room, roomID is ' + roomID
 
@@ -135,9 +135,6 @@ class ChatNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
             print "join-roomID:", roomID
 
             self.join(roomID)
-
-            # To add roomID into ACTIVE
-            ACTIVE = {}.fromkeys(roomID)
 
             print 'create room, roomID is ' + roomID
 
