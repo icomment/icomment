@@ -17,6 +17,8 @@ from socketio.mixins import RoomsMixin, BroadcastMixin
 # Global dictionary, tot store roomID and the users in it.
 ACTIVE = {}
 
+reload(sys)
+sys.setdefaultencoding( "utf-8" )
 
 class ChatNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
 
