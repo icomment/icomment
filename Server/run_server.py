@@ -338,9 +338,9 @@ def not_found(start_response):
 
 if __name__ == '__main__':
 
-    print 'Listening on port 8080 and on port 843'
+    print 'Listening on port 8000 and on port 843'
 
-    SocketIOServer(('0.0.0.0', 8080), Application(),
+    SocketIOServer(('0.0.0.0', 8000), Application(),
 
         resource = "socket.io",
 
