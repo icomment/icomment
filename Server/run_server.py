@@ -333,7 +333,6 @@ def not_found(start_response):
     return ['<h1>Not Found</h1>']
     
     
-
 # __main__ function, keep listening on port 8080 receiving connection from client side
 
 if __name__ == '__main__':
