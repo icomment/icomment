@@ -29,5 +29,11 @@ If you find a bug, please submit it to our issues, https://github.com/icomment/i
 
 
 $5 Features
-...
+An abstact of the feature list:
+        a. Instant message communication with different message channel.
+        b. Message channel based on preselected url which only focus on web page with articles(filter out other useless pages).
+        c. Preserve chat history for each message channel.
+        d. Basic security mechanism (url encoded with md5, flooding prevention,sql injection,Xss prevention).
 
+$6 Limitation
+One feature which is designed to implement but we have difficulty to do is the post back function. We want users to be able to login in their SNS account in our extension and then post their chatting back to the original article web pages. In addition, we want to preserve their login session so that they don't need to log in again in other pages. However, we find out the facebook API doesn't allow third party to 
