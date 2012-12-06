@@ -34,7 +34,7 @@ If you find a bug, please submit it to our issues, https://github.com/icomment/i
 $5 Features
 An abstact of the feature list:
         a. Instant message communication with different message channel.
-        b. Message channel based on preselected url which only focus on web page with articles(filter out other useless pages).
+        b. Message channel based on preselected url with filtering algorithm which only focus on web page with articles.
         c. Preserve chat history for each message channel.
         d. Basic security mechanism (url encoded with md5, flooding prevention,sql injection,Xss prevention).
 
