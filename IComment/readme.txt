@@ -1,5 +1,4 @@
 ====IComment Client====
-Author: raybit.tang at gmail.com
 
 $1 Intro
 Client part of this project works as a google's chrome extension. If you are not familar with this and wanna take a quick tour, please spend 15~30 on this video(http://www.youtube.com/watch?v=sO1FujZDT0s). 
