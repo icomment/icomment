@@ -86,6 +86,7 @@ function onConnHandler(port){
 
 
     //3 handlers to recv messages from  contentscripts 
+
     port.onMessage.addListener(function(evt) {
 
       if(evt.type == "login"){
@@ -127,6 +128,7 @@ chrome.tabs.onUpdated.addListener(function( tabId,  changeInfo, tab) {
           chrome.tabs.executeScript(tabId, { file: "sidebar.js" });
           chrome.tabs.executeScript(tabId, { file: "jq_sexy_textarea.js" });
           chrome.tabs.executeScript(tabId, { file: "icCS_roomExt.js" });                                   
+
         }); 
 
       }else{
@@ -172,6 +174,7 @@ socket.on('nicknames', function (roomID,nicknames) {
 
 socket.on('msg_to_room', function (roomID,from,msg) {
     console.log("recv msg2room" )
+    
     var port = icBG.r2p[roomID];
     port.postMessage({type:"recvMessage",data:{from:from, msg:msg} })
 
@@ -179,7 +182,7 @@ socket.on('msg_to_room', function (roomID,from,msg) {
 
 
 socket.on('history', function (msgList,roomID) {
-    console.log("msgList:"+msgList );
+    console.log("msgList:"+msgList )
 
     var port = icBG.r2p[roomID];
     port.postMessage({type:"recvHistoryMsg",data: JSON.parse(msgList) })

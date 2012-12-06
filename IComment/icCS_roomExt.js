@@ -11,6 +11,9 @@ console.log('append room');
 //Dom-ID assign
 var icRoom={};
 var idp = icRoom._idPool={};
+var floodingCounter = 0;
+var currentMessage = {};
+
 idp.container	='#icSideBar';
 idp.IDBase		=idp.container+'-';
 idp.room 		=idp.IDBase+'chat';
@@ -133,9 +136,10 @@ $(document).ready(function () {
 		}else if (evt.type=="refreshUserList"){
 
 			nicknames = evt.data;
+
 		    $(idp.userList).empty().append($('<span>Online: </span>'));
 		    for (var i in nicknames) {
-		    	$(idp.userList).append($('<b>').text(nicknames[i]));
+		    	$(idp.userList).append($('<b>').text(nicknames[i]+","));
 		    }
 
 		}else if(evt.type=="checkLogin"){
@@ -201,6 +205,22 @@ $(document).ready(function () {
 	    	evt.preventDefault();   	
 	    	//show on sender's page
 			var currMsg =$(idp.currMsg).val();
+			if(currMsg==currentMessage){
+				floodingCounter++;
+			}
+			else {
+				currentMessage=currMsg
+				floodingCounter=0;
+			}
+
+			if(floodingCounter>3){
+				console.log("It is flooding");
+				message("","","Warning:Don't Flood!")
+				return false
+
+			}
+
+			console.log("curentmessage:"+currMsg);
 			//don't send empty msg
 			if($.trim(currMsg)==''){
 	    		return false;
