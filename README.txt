@@ -14,13 +14,16 @@ The server is written by python and use mysql as DB. Check the readme in the ser
 
 
 $3 Tech 
-The most significant techchoice for this project is how to maintain the message channel between clients and server, namely to pick one kind of web push technoloy(http://en.wikipedia.org/wiki/Push_technology). There are several solutions and all of them are not new: 
+The most significant techchoice for this project is how to maintain the message channel between clients and server, namely to pick one kind of web push technoloy(http://en.wikipedia.org/wiki/Push_technology).
+There are several solutions and all of them are not new: 
 	a. Repeatly pull by Ajax request: terrible,inefficient, and out of date
 	b. Flash socket: efficient but not always work well
 	c. Long pulling: acceptable, compatible in all cases
 	d. Web socket: very efficient but only supported by modern browsers
 
-Well, for google chrome, web socket should be best chioce for our project. And we don't just use the general webSocket in HTML5 but its advanced encapsulation, socketio. Let's skip somes details of it (please ref their own site, http://socket.io/#faq). It provides javascript lib for both client and server while we wanna write server by Python. So we only import its client js lib into our project, and pick the gevent-socketio which is the python-version socketio( https://gevent-socketio.readthedocs.org/en/latest/ ).
+Well, for google chrome, web socket should be best chioce for our project. And we don't just use the general webSocket in HTML5 but its advanced encapsulation, socketio. 
+Let's skip somes details of it (please ref their own site, http://socket.io/#faq). It provides javascript lib for both client and server while we wanna write server by Python. So we only import its client js lib into our project, 
+and pick the gevent-socketio which is the python-version socketio( https://gevent-socketio.readthedocs.org/en/latest/ ).
 
 
 $4 Bug bounty and tracker
@@ -36,4 +39,6 @@ An abstact of the feature list:
         d. Basic security mechanism (url encoded with md5, flooding prevention,sql injection,Xss prevention).
 
 $6 Limitation
-One feature which is designed to implement but we have difficulty to do is the post back function. We want users to be able to login in their SNS account in our extension and then post their chatting back to the original article web pages. In addition, we want to preserve their login session so that they don't need to log in again in other pages. However, we find out the facebook API doesn't allow third party to 
+One feature which is designed to implement but we have difficulty to do is the post back function. We want users to be able to login in their SNS account(Facebook) in our extension and then post their chatting back to the original article web pages. 
+In addition, we want to preserve their login session so that they don't need to log in again in other pages. However, we find out the facebook API neither let us to access users' password nor allow us to extend login session to other web pages.
+We also consider to make a fake Facebook login box in our extension and access users' input but this maybe illegal.
