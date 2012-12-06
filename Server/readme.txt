@@ -1,3 +1,5 @@
+Note this is already running on our EC2 Server , the fllowing instructions is only for you to install in your local host.
+
 #installation guide for linux
 
 We assume you can finish two tasks:
