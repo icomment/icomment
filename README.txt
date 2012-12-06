@@ -38,6 +38,8 @@ An abstact of the feature list:
         c. Preserve chat history for each message channel.
         d. Basic security mechanism (url encoded with md5, flooding prevention,sql injection,Xss prevention).
 
+
+
 $6 Limitation
 One feature which is designed to implement but we have difficulty to do is the post back function. We want users to be able to login in their SNS account(Facebook) in our extension and then post their chatting back to the original article web pages. 
 In addition, we want to preserve their login session so that they don't need to log in again in other pages. However, we find out the facebook API neither let us to access users' password nor allow us to extend login session to other web pages.
