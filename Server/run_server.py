@@ -197,7 +197,7 @@ class ChatNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
 
         if nickname != None:
 
-            self.emit_to_room(roomID, 'announcement', roomID,'%s has connected' % nickname)
+            self.emit_to_room(roomID, 'announcement', roomID,'%s has disconnected' % nickname)
 
             self.emit_to_room(roomID, 'nicknames',roomID, self.request['nicknames'])
 

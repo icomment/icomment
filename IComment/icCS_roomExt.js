@@ -81,6 +81,15 @@ function userTryEnterRoom(){
 
    	console.log('tryEnterRoom');
 }
+function userTryLeaveRoom(){
+	isUserEnterRoom=false;
+	isShowingLoginWin=false;
+	$(idp.room).removeClass('tryLogin')
+   	$(idp.room).addClass('notLogin')
+   	clear();
+   	$(idp.loginBtn).text('Login')	
+   	console.log('tryleaveRoom');
+}
 function userEnterRoom(){
 	isUserEnterRoom=true;
 	isShowingLoginWin=false;
@@ -91,7 +100,7 @@ function userEnterRoom(){
 
 	clear();
 	//change login btn
-	$(idp.loginBtn).text('Hi~')	
+	$(idp.loginBtn).text('Leave')	
 	console.log('userEnterRoom');
 }
 
@@ -173,6 +182,16 @@ $(document).ready(function () {
     		if(!isUserEnterRoom && !isShowingLoginWin){
 				userTryEnterRoom();
     		}
+    		else if (isUserEnterRoom) {
+    		//evt.preventDefault();
+	        //$(idp.nickName).val() = null;
+	        port.postMessage({type:"logout"})
+
+   			clear();
+   			$(idp.room).removeClass('nickname-set');
+    		userTryLeaveRoom();
+
+    		};
 		    return false;
 	    });
 
@@ -187,12 +206,11 @@ $(document).ready(function () {
 		//triggered by clicking doLoginBtn('Enter') or pressing EnterKey in LoginWin 
 	    $(idp.setNameForm).submit(function (evt) {
 	        evt.preventDefault();
-
+	        clear();
 
 	        LocalUserName = $(idp.nickName).val();
+	        console.log(LocalUserName)
 	        port.postMessage({type:"login",data: LocalUserName })
-
-   			clear();
 
    			//ToFix if login action fail -> add error process
    			//change chat page view 

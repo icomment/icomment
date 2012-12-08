@@ -83,6 +83,7 @@ function onConnHandler(port){
         //onConn room
         port.postMessage({type:"joinRoom",data:roomID});// show connected
     });
+    // Log out request
 
 
     //3 handlers to recv messages from  contentscripts 
@@ -91,12 +92,14 @@ function onConnHandler(port){
 
       if(evt.type == "login"){
         //the login evt only happen once 
+        console.log("recieve login")
         if(icBG.isLogin ==false){
           socket.emit('nickname', evt.data,roomID);
 
           //todo if login false, or change to SNS account
           icBG.isLogin =true;
           icBG.username = evt.data;
+          console.log("trigger login")
 
         }      
       }else if(evt.type == "newMessage"){
@@ -106,6 +109,13 @@ function onConnHandler(port){
       }else if(evt.type == "checkLogin"){
           
         port.postMessage({type:"checkLogin",data:icBG.isLogin})
+      }else if(evt.type == "logout"){
+
+        icBG.isLogin =false;
+        console.log("trigger logout")
+        socket.emit("leave",roomID)
+        port.postMessage({type:"refreshUserList",data:nicknames})
+
       }
     });
 
