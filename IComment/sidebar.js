@@ -63,11 +63,14 @@ logoImgSrc = chrome.extension.getURL("logo.png");
   			+"</div>"
   			+"<div id='icSideBar-login'>"
   				+"<button id='icSideBar-loginBtn' >Login</button>"
-  				
   			+"</div>"
   		+"</div>"
+
   		+"<div id='icSideBar-content'>"
+
+
 			+"<div id='icSideBar-nickname'>"
+
 		      +"<form id='icSideBar-set-nickname' class='wrap'>"
 		        +"<p>Type your nickname.</p>"
 		        +"<input id='icSideBar-nick'> <br>"
@@ -83,6 +86,7 @@ logoImgSrc = chrome.extension.getURL("logo.png");
 		      +"<div id='icSideBar-nicknames'><span>Online:</span></div>"
 		      +"<div id='icSideBar-lines'></div>"
 		    +"</div>"
+		    +"<a id='icSideBar-btnShowMore' href='javascript:void()'> Show More</a>"
 		    +"<form id='icSideBar-send-message'>"
 		      
 		      +"<textarea id='icSideBar-message' class='icSiderBar-default' style='width:234px;height:80px;'></textarea>"

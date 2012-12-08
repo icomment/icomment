@@ -13,10 +13,13 @@ var icRoom={};
 var idp = icRoom._idPool={};
 var floodingCounter = 0;
 var currentMessage = {};
+var historyPage=5;
+var historyPageNumber;
 
 idp.container	='#icSideBar';
 idp.IDBase		=idp.container+'-';
 idp.room 		=idp.IDBase+'chat';
+idp.btnShowMore ="#icSideBar-btnShowMore";
 
 idp.currMsg 	= idp.IDBase+'message';
 idp.userList 	= idp.IDBase+'nicknames';
@@ -163,7 +166,8 @@ $(document).ready(function () {
 			//[["2012-11-22 08:28:22", "msg time2", "we"], ["2012-11-22 08:28:08", "msg time1", "we"]]
 			var len  =msgList.length;
 			var msg;
-			for(var i=0;i<len;i++){
+			historyPageNumber=1;
+			for(var i=0;i<historyPage;i++){
 				msg=msgList[i];
 				//console.log(msg[0] +'  '+ msg[1] +"   "+msg[2] );
 				message(msg[2],msg[1],msg[0]);
@@ -175,6 +179,25 @@ $(document).ready(function () {
 
 	// bimd DOM based actions&listeners
 	$(function () {
+
+//showing more history 5 more each click
+		$(idp.btnShowMore).click(function(){
+
+        
+			if (historyPageNumber*historyPage<msgList.length) {
+			var msg;
+
+			for(var i=historyPage*historyPageNumber;i<historyPage*(historyPageNumber+1);i++){
+				msg=msgList[i];
+				//console.log(msg[0] +'  '+ msg[1] +"   "+msg[2] );
+				message(msg[2],msg[1],msg[0]);
+				console.log(msg[2]+msg[1]+msg[0]);
+
+			}
+			historyPageNumber++;
+		}
+		     return false;
+		});
 
 		//only allow user login once on any chatting page 
 		$(idp.loginBtn).click(function (evt) {

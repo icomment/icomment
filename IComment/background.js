@@ -114,7 +114,7 @@ function onConnHandler(port){
         icBG.isLogin =false;
         console.log("trigger logout")
         socket.emit("leave",roomID)
-        port.postMessage({type:"refreshUserList",data:nicknames})
+        //port.postMessage({type:"refreshUserList",data:nicknames})
 
       }
     });
