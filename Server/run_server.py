@@ -198,15 +198,19 @@ class ChatNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
         nickname = self.socket.session.get('nickname')
 
         if nickname != None:
+            for roomID in roomSet:
 
-            self.emit_to_room(roomID, 'announcement', roomID,'%s has disconnected' % nickname)
+                self.emit_to_room(roomID, 'announcement', roomID,'%s has disconnected' % nickname)
 
-            self.emit_to_room(roomID, 'nicknames',roomID, self.request['nicknames'])
+                self.emit_to_room(roomID, 'nicknames',roomID, self.request['nicknames'])
 
-        # To remove the user from the room he is leaving            
-        if nickname in ACTIVE[roomID]:
+        # To remove the user from the room he is leaving   
+        for roomID in roomSet:         
+            if nickname in ACTIVE[roomID]:
 
-            ACTIVE[roomID].remove(nickname)
+                ACTIVE[roomID].remove(nickname)
+
+
 
     # When a user leaves a msg in th room, call this
 

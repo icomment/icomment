@@ -151,6 +151,7 @@ $(document).ready(function () {
 
 		    $(idp.userList).empty().append($('<span>Online: </span>'));
 		    for (var i in nicknames) {
+		    	console.log("Nickname:" + nicknames[i])
 		    	$(idp.userList).append($('<b>').text(nicknames[i]+","));
 		    }
 
@@ -208,7 +209,7 @@ $(document).ready(function () {
     		else if (isUserEnterRoom) {
     		//evt.preventDefault();
 	        //$(idp.nickName).val() = null;
-	        port.postMessage({type:"logout"})
+	        port.postMessage({type:"logout",data:roomID})
 
    			clear();
    			$(idp.room).removeClass('nickname-set');

@@ -111,9 +111,9 @@ function onConnHandler(port){
         port.postMessage({type:"checkLogin",data:icBG.isLogin})
       }else if(evt.type == "logout"){
 
-        icBG.isLogin =false;
-        console.log("trigger logout")
-        socket.emit("leave",roomID)
+          icBG.isLogin =false;
+          console.log("trigger logout")
+          socket.emit("leave",roomID)
         //port.postMessage({type:"refreshUserList",data:nicknames})
 
       }
@@ -176,7 +176,7 @@ socket.on('announcement',function (roomID,msg) {
 });
 
 socket.on('nicknames', function (roomID,nicknames) {
-    console.log("recv nicknames")
+    console.log("recv nicknames"+nicknames)
     var port = icBG.r2p[roomID];
     port.postMessage({type:"refreshUserList",data:nicknames})
 
