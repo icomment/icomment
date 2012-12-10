@@ -37,6 +37,8 @@ class ChatNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
                 self.request['nicknames'].append(nickname)
 
                 # To add user into the database
+                #nickname=nickname.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;").replace(">", "&gt;")
+     
                 user_register(nickname)
 
                 print 'Nickname[' + nickname + '] stores successfully!'
@@ -220,6 +222,9 @@ class ChatNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
 
         #To do check rID whether is in user's roomSet
         roomID = rID;#.upper();
+        msg=msg.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;").replace(">", "&gt;")
+     
+
         
         print 'msg=',msg,'roomID=',roomID
 
