@@ -185,20 +185,23 @@ class ChatNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
 
         print "leave-roomID:", roomID
 
-        self.leave(roomID)
+        #self.leave(roomID)
 
         # get('roomSet') can avoid error msg
         roomSet = self.socket.session.get('roomSet')
 
-        # To remove roomID when he leaves the room
-        if roomSet != None:
 
-            roomSet.remove(roomID)
+
+        # To remove roomID when he leaves the room
+        #if roomSet != None:
+
+            #roomSet.remove(roomID)
 
         nickname = self.socket.session.get('nickname')
 
         if nickname != None: 
             print "recv disconnected, remove user:" + nickname
+            self.request['nicknames'].remove(nickname)
             for roomID in roomSet:
 
                 self.emit_to_room(roomID, 'announcement', roomID,'%s has disconnected' % nickname)
