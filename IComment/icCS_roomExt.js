@@ -12,7 +12,7 @@ console.log('append room');
 var icRoom={};
 var idp = icRoom._idPool={};
 var floodingCounter = 0;
-var currentMessage = {};
+var curentTime = 0;
 var historyPage=5;
 var historyPageNumber;
 
@@ -247,15 +247,10 @@ $(document).ready(function () {
 	    	evt.preventDefault();   	
 	    	//show on sender's page
 			var currMsg =$(idp.currMsg).val();
-			if(currMsg==currentMessage){
-				floodingCounter++;
-			}
-			else {
-				currentMessage=currMsg
-				floodingCounter=0;
-			}
-
-			if(floodingCounter>3){
+			var timeDifference = new Date().getTime() / 1000 - curentTime;
+		    curentTime= new Date().getTime() / 1000;
+		    console.log("Time now is "+ curentTime);
+			if(timeDifference<1){
 				console.log("It is flooding");
 				message("","","Warning:Don't Flood!")
 				return false
