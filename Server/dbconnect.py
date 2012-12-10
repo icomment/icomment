@@ -8,7 +8,7 @@ import json
 # To initial Database connection
 def init_connection():
 
-	conn = MySQLdb.connect(host = 'localhost', user = 'root', passwd = 'root123', db = 'icomment', port = 3306)
+	conn = MySQLdb.connect(host = 'localhost', user = 'root', passwd = 'me0w', db = 'icomment', port = 3306)
 
 	return conn
 
