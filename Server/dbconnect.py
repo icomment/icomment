@@ -179,7 +179,7 @@ def get_all_history(url, md5):
 	# If there is the room, then to get all the history from it, currently it only gets the latest 20 comments
 	else:
 		# To generate a sql qu ery text
-		sql = '''select c.commentTime, c.commentContent,us.uName from comments c, url u,users us where u.md5 = %s and u.indexId = c.urlID and c.uID = us.indexID order by c.commentTime asc limit 0,20'''
+		sql = '''select c.commentTime, c.commentContent,us.uName from comments c, url u,users us where u.md5 = %s and u.indexId = c.urlID and c.uID = us.indexID order by c.commentTime asc'''
 
 		# To execute the generated sql text
 		cur.execute(sql, md5)
